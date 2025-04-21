@@ -5,74 +5,89 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 
-public class ServeillanceSytemController
-{
+import java.util.ArrayList;
+
+
+public class ServeillanceSytemController {
     @javafx.fxml.FXML
-    private ListView cameraListView;
+    private ListView<String> cameraListView;
     @javafx.fxml.FXML
     private TextArea logArea;
 
+    private ArrayList<String> flaggedFootage = new ArrayList<>();
+    private ArrayList<String> archive = new ArrayList<>();
+
     @javafx.fxml.FXML
     public void initialize() {
+        cameraListView.getItems().addAll(
+                "Camera 1 - Front Gate",
+                "Camera 2 - Parking Lot",
+                "Camera 3 - Lobby",
+                "Camera 4 - Back Entrance"
+        );
     }
 
     @javafx.fxml.FXML
     public void ArchiveFootage(ActionEvent actionEvent) {
         String selected = cameraListView.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            showAlert("Select a camera feed to archive.");
+            showAlert("Select a camera feed to archive footage.");
             return;
         }
 
-        archivedFootage.add(selected);
-        log("Archived footage: " + selected);
-    }
-
-    private void log(String message) {
-        logArea.appendText(message + "\n");
-
+        String entry = selected + " - Archived";
+        archive.add(entry);
+        log("Archived: " + entry);
     }
 
     @javafx.fxml.FXML
-    public void FlagFootage(ActionEvent actionEvent){
+    public void FlagFootage(ActionEvent actionEvent) {
         String selected = cameraListView.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            showAlert("Select a camera feed to flag.");
+            showAlert("Select a camera feed to flag suspicious activity.");
             return;
         }
+
+        flaggedFootage.add(selected);
+        log("Flagged suspicious footage on: " + selected);
     }
 
 
     @javafx.fxml.FXML
     public void Zoom(ActionEvent actionEvent) {
-            String selected = cameraListView.getSelectionModel().getSelectedItem();
-            if (selected == null) {
-                showAlert("Please select a camera feed to zoom.");
-                return;
-            }
-            log("Zoomed in on: " + selected);
+        String selected = cameraListView.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showAlert("Please select a camera feed to zoom.");
+            return;
         }
+
+        log("Zoomed on: " + selected);
     }
 
     @javafx.fxml.FXML
     public void GenerateReport(ActionEvent actionEvent) {
-        String[] GenerateReport;
-        if (GenerateReport.isEmpty()) {
-            showAlert("No flagged footage to generate report.");
+        if (flaggedFootage.isEmpty()) {
+            showAlert("No flagged footage available to generate a report.");
             return;
-
         }
 
-        log("=== Incident Report ===");
-        for (String feed : GenerateReport) {
-            log("- " + feed);
+        StringBuilder report = new StringBuilder("Incident Report:\n");
+        for (String feed : flaggedFootage) {
+            report.append("- ").append(feed).append("\n");
         }
-        GenerateReport.clear();
+
+        log(report.toString());
+        flaggedFootage.clear();
     }
+
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+
+    }
+    private void log(String message) {
+        logArea.appendText(message + "\n");
     }
 }
