@@ -1,6 +1,6 @@
 package com.example.condoniumassosication;
 
-public class SecurityOfficerController
+public class SecurityOfficeGoal7Controller
 {
     @javafx.fxml.FXML
     public void initialize() {
